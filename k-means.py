@@ -18,6 +18,39 @@ def draw_data( data, classes, centers ,colors = ("r" , "b" , "g" , "c" , "m" , "
 def draw_line( p1 , p2 , color="k" ):
     pylab.plot( [p1[0], p2[0]] , [p1[1],p2[1]], color=color )
 
+def plot1(K, d, data, classes, centers, errors ):
+    pylab.clf()
+    pylab.subplot( "121" )
+    draw_data( data, classes, centers )
+    for k in range(K):
+        draw_line( d , centers[k] )
+    pylab.subplot( "122" )
+    pylab.plot( range(len(errors)) , errors )
+    pylab.draw()
+    pylab.pause(0.1)
+
+def plot2(k_new, d, data, classes, centers, errors ):
+    pylab.clf()
+    pylab.subplot( "121" )
+    draw_data( data, classes, centers )
+    draw_line( d , centers[k_new] , "y" )
+    pylab.subplot( "122" )
+    pylab.plot( range(len(errors)) , errors )
+    pylab.draw()
+    pylab.pause(0.1)
+
+
+def plot3(K, d, data, classes, centers, errors ):
+    pylab.ioff()
+    pylab.clf()
+    pylab.subplot( "121" )
+    draw_data( data, classes, centers )
+    for d,c in zip(data,classes):
+        draw_line( d , centers[c] )
+    pylab.subplot( "122" )
+    pylab.plot( range(len(errors)) , errors )
+    pylab.show()
+
 def calc_center(k, data, classes):
     center = numpy.zeros( len(data[0]) )
     n = 0
@@ -50,6 +83,7 @@ def calc_error( data , classes, centers ):
     return err
 
 
+
 # k-meansメイン
 def kmeans( data , K ):
     pylab.ion()
@@ -80,15 +114,7 @@ def kmeans( data , K ):
             k_old = classes[i]  # 現在のクラス
 
             # グラフ表示
-            pylab.clf()
-            pylab.subplot( "121" )
-            draw_data( data, classes, centers )
-            for k in range(K):
-                draw_line( d , centers[k] )
-            pylab.subplot( "122" )
-            pylab.plot( range(len(errors)) , errors )
-            pylab.draw()
-            pylab.pause(0.1)
+            plot1(K, d, data, classes, centers, errors )
 
             # 最近傍のクラスを見つける
             k_new = find_nearest_class( d , centers )
@@ -100,14 +126,7 @@ def kmeans( data , K ):
                 centers[k_new] = calc_center( k_new , data , classes )
 
             # グラフ表示
-            pylab.clf()
-            pylab.subplot( "121" )
-            draw_data( data, classes, centers )
-            draw_line( d , centers[k_new] , "y" )
-            pylab.subplot( "122" )
-            pylab.plot( range(len(errors)) , errors )
-            pylab.draw()
-            pylab.pause(0.1)
+            plot2(k_new, d, data, classes, centers, errors )
 
             e = calc_error( data, classes, centers )
             errors.append(e)
@@ -115,17 +134,7 @@ def kmeans( data , K ):
 
 
     # 最終的な結果を表示
-    pylab.ioff()
-    pylab.clf()
-    pylab.subplot( "121" )
-    draw_data( data, classes, centers )
-    for d,c in zip(data,classes):
-        draw_line( d , centers[c] )
-    pylab.subplot( "122" )
-    pylab.plot( range(len(errors)) , errors )
-    pylab.show()
-
-
+    plot3(K, d, data, classes, centers, errors )
 
 def main():
     data = numpy.loadtxt( "data1.txt" )
